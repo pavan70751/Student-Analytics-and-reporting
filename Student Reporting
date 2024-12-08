@@ -1,0 +1,101 @@
+import java.util.*;
+
+public class PerformanceAnalytics {
+    private List<Student> students;
+
+    public PerformanceAnalytics() {
+        this.students = new ArrayList<>();
+    }
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public double getOverallAverage() {
+        return students.stream()
+                .mapToDouble(Student::getAverageGrade)
+                .average()
+                .orElse(0.0);
+    }
+
+    public Student getTopStudent() {
+        return students.stream()
+                .max(Comparator.comparingDouble(Student::getAverageGrade))
+                .orElse(null);
+    }
+
+    public void printReport() {
+        System.out.println("Student Performance Report:");
+        System.out.println("===========================");
+
+        for (Student student : students) {
+            System.out.printf("ID: %s, Name: %s, Average Grade: %.2f%n", 
+                               student.getId(), student.getName(), student.getAverageGrade());
+        }
+
+        System.out.println("\nOverall Average Grade: " + getOverallAverage());
+
+        Student topStudent = getTopStudent();
+        if (topStudent != null) {
+            System.out.printf("Top Student: %s (%.2f)%n", 
+                               topStudent.getName(), topStudent.getAverageGrade());
+        }
+    }
+}
+public class Student {
+    private String id;
+    private String name;
+    private List<Double> grades;
+
+    public Student(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.grades = new ArrayList<>();
+    }
+
+    public void addGrade(double grade) {
+        grades.add(grade);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Double> getGrades() {
+        return grades;
+    }
+
+    public double getAverageGrade() {
+        return grades.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        PerformanceAnalytics analytics = new PerformanceAnalytics();
+
+        Student student1 = new Student("S001", "Alice");
+        student1.addGrade(85);
+        student1.addGrade(90);
+        student1.addGrade(88);
+
+        Student student2 = new Student("S002", "Bob");
+        student2.addGrade(78);
+        student2.addGrade(82);
+        student2.addGrade(80);
+
+        Student student3 = new Student("S003", "Charlie");
+        student3.addGrade(92);
+        student3.addGrade(88);
+        student3.addGrade(95);
+
+        analytics.addStudent(student1);
+        analytics.addStudent(student2);
+        analytics.addStudent(student3);
+
+        analytics.printReport();
+    }
+}
